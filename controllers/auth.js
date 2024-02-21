@@ -1,6 +1,7 @@
 const studentModel = require('../models/userStudent.js')
 const facultyModel = require('../models/userFaculty.js')
 const adminModel = require('../models/userAdmin.js')
+const jwt = require('jsonwebtoken')
 
 // HELPER
 const { hashPassword, compareHashedPassword } = require('../helper/bcrypt.js')
@@ -38,7 +39,7 @@ async function createNewUser(req, res) {
             })
         }
         res.status(201).json({
-            data: 'successfully registered',
+            message: 'successfully registered',
         })
     } catch (error) {
         console.log(error)
@@ -61,14 +62,17 @@ const loginController = async (req, res) => {
         if (!user) return res.json({ message: "Incorrect credentials" })
         const passCheck = await compareHashedPassword(password, user.password)
         if (!passCheck) return res.status(400).json({ message: "Incorrect credentials" })
+        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '7d' })
         return res.status(200).json({
             message: "logged in successfully",
             data: {
                 name: user.name,
                 email: user.email,
-                userType: user.userType
+                userType: user.userType,
+                token: token
             }
         })
+
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "Error in login controller", data: error })

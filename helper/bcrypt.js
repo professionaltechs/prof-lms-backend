@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 // CRYPTING PASSWORD
 async function hashPassword(password) {
     try {
-        const salt = await bcrypt.genSalt(process.env.SLATS);
+        const salt = await bcrypt.genSalt(parseInt(process.env.SLATS));
         const hash = await bcrypt.hash(password, salt);
         return hash;
     } catch (error) {
