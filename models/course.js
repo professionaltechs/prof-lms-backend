@@ -5,9 +5,10 @@ const courseModel = new mongoose.Schema({
         type: String,
         required: true,
     },
-    courseNumber:{
+    courseNumber: {
         type: Number,
         required: true,
+        unique: true
     }
 })
 

@@ -15,8 +15,14 @@ const facultyModel = new Schema({
         required: true,
         minlength: 6,
     },
-    userType : {
-        type : Number,
+    userType: {
+        type: Number,
+    },
+    courses: {
+        type: [{
+            type: Number,
+        }],
+        default: [],
     }
 })
 

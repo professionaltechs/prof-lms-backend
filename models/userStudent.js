@@ -15,9 +15,11 @@ const studentModel = new Schema({
         required: true,
         minlength: 6,
     },
-    courses : {
-        type : Array,
-        default : []
+    courses: {
+        type: [{
+            type: Number,
+        }],
+        default: []
     }
 })
 

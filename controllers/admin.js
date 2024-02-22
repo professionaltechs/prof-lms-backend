@@ -3,7 +3,27 @@ const express = require('express')
 // MODELS
 const studentModel = require('../models/userStudent.js')
 const courseModel = require('../models/course.js')
+const facultyModel = require('../models/userFaculty.js')
 
+const getAllStudents = async (req, res) => {
+    try {
+        const students = await studentModel.find({})
+        return res.json({ message: "success", data: students })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Error in get all students controller", data: error })
+    }
+}
+
+const getAllFaculty = async (req, res) => {
+    try {
+        const faculty = await facultyModel.find({})
+        return res.json({ message: "success", data: faculty })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Error in get all faculty controller", data: error })
+    }
+}
 
 const createCourse = async (req, res) => {
     try {
@@ -36,4 +56,4 @@ const addStudentCourses = async (req, res) => {
     }
 }
 
-module.exports = { createCourse, addStudentCourses }
+module.exports = { createCourse, addStudentCourses, getAllStudents, getAllFaculty }
