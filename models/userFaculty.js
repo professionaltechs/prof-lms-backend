@@ -23,6 +23,12 @@ const facultyModel = new Schema({
             type: Number,
         }],
         default: [],
+    },
+    courseContent : {
+        type : [{
+            type : Object,
+            default : []
+        }]
     }
 })
 

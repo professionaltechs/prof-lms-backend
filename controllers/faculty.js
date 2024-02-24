@@ -2,6 +2,9 @@ const fs = require("fs");
 const facultyModel = require("../models/userFaculty.js");
 const studentModel = require("../models/userStudent.js");
 
+// UPLOAD CONTENT PATH
+const { path } = require("../helper/multerConfig.js");
+
 const getCourseStudents = async (req, res) => {
   try {
     const { courses } = req.body.user;
@@ -62,11 +65,34 @@ const selectFacultyCourses = async (req, res) => {
   }
 };
 
-const uploadCourseContent = (req, res) => {
-  res.setHeader("Content-Type", "application/pdf");
-  var data = fs.readFileSync(req.files[0].path);
-  console.log(req.files[0]);
-  res.send(data);
+const uploadCourseContent = async (req, res) => {
+  const { facultyId } = req.body;
+  let newCourseContent;
+  let allContent = [];
+  for (let i = 0; i < req.files.length; i++) {
+    const file = req.files[i];
+    newCourseContent = {
+      contentName: file.filename,
+      contentTpye: file.mimetype,
+    };
+    allContent.push(newCourseContent);
+  }
+  const updateFacultyCourses = await facultyModel.findByIdAndUpdate(
+    facultyId,
+    { $push: { courseContent: { $each: allContent } } },
+    { new: true }
+  );
+  res.send({
+    message: "Course updated successfully",
+    courseContents: updateFacultyCourses,
+  });
+};
+
+const getFacultyCourseContent = async (req, res) => {
+  const { facultyId, fileName, fileType } = req.body;
+  let fileData = fs.readFileSync(path + fileName);
+  res.setHeader("Content-Type", fileType);
+  res.send(fileData);
 };
 
 module.exports = {
@@ -74,4 +100,5 @@ module.exports = {
   getCourseStudents,
   getSpecificCourseStudents,
   uploadCourseContent,
+  getFacultyCourseContent,
 };

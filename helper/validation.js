@@ -35,7 +35,7 @@ const isFaculty = async (req, res, next) => {
   try {
     const user = await facultyModel.findById(req.body.userId);
     if (!user) return res.json({ message: "Faculty not found" });
-    req.body.user = user;
+    // req.body.user = user;
     next();
   } catch (error) {
     console.log(error);
