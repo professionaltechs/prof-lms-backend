@@ -1,14 +1,22 @@
 const express = require("express");
 const multer = require("multer");
+
+// HELPERS
+const {
+  requireSignin,
+  isFaculty,
+  validCourseNumber,
+} = require("../helper/validation.js");
+
+// CONTROLLERS
 const {
   selectFacultyCourses,
   getCourseStudents,
   getSpecificCourseStudents,
   uploadCourseContent,
   getFacultyCourseContent,
+  addAttendence,
 } = require("../controllers/faculty.js");
-const { requireSignin } = require("../helper/validation.js");
-const { isFaculty } = require("../helper/validation.js");
 
 // MULTER
 const { upload } = require("../helper/multerConfig.js");
@@ -40,6 +48,14 @@ router.get(
   requireSignin,
   isFaculty,
   getFacultyCourseContent
+);
+
+router.post(
+  "/add-attendence/:courseNumber",
+  requireSignin,
+  isFaculty,
+  validCourseNumber,
+  addAttendence
 );
 
 module.exports = router;
