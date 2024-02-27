@@ -2,11 +2,13 @@ const express = require("express");
 const multer = require("multer");
 
 // HELPERS
-const {
-  requireSignin,
-  isFaculty,
-  validCourseNumber,
-} = require("../helper/validation.js");
+const { requireSignin, isFaculty } = require("../helper/validation.js");
+
+// FACULTY HELPERS
+const { isFacultyCourse, sessionAttendenceValidation } = require("../helper/faculty.js");
+
+// COURSE HELPERS
+const { validCourseNumber } = require("../helper/course.js");
 
 // CONTROLLERS
 const {
@@ -55,6 +57,8 @@ router.post(
   requireSignin,
   isFaculty,
   validCourseNumber,
+  isFacultyCourse,
+  sessionAttendenceValidation,
   addAttendence
 );
 

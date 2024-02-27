@@ -97,29 +97,47 @@ const getFacultyCourseContent = async (req, res) => {
 
 const addAttendence = async (req, res) => {
   try {
+    const { studentsPresent } = req.body;
     const faculty = req.body.user;
     const courseNumber = req.body.courseNumber.courseNumber;
-    console.log(faculty);
-    console.log(courseNumber);
-    if (!faculty.courses.includes(courseNumber))
-      return res.send({ message: "faculty not teaching this course" });
-    var datetime = new Date();
-    const date =
-      datetime.getDate() +
-      "/" +
-      datetime.getMonth() +
-      "/" +
-      datetime.getFullYear();
-    const updatedAttendece = await facultyModel.findOneAndUpdate(
-      { _id: faculty._id },
-      // { $addToSet: { courseAttendence: { [courseNumber]: "abc" } } },
-      // { $addToSet: { courseAttendence: { [courseNumber]: { [date] : 'abc'} } } },
+    const date = req.body.date;
+
+    // SESSION NEXT ATTENDENCE
+    let updatedAttendece = await facultyModel.updateOne(
+      { _id: faculty._id, "courseAttendence.courseNumber": courseNumber },
       {
-        $addToSet: { courseAttendence: {301 : []} },
-        $push: { "courseAttendence.301": 'abc' }
-      },
-      { new: true }
+        $push: {
+          "courseAttendence.$.attendence": {
+            date: date,
+            studentsPresent: studentsPresent,
+          },
+          "courseAttendence.$.allSessions": date,
+        },
+      }
     );
+
+    // SESSION FIRST ATTENDENCE
+    if (updatedAttendece.modifiedCount === 0) {
+      updatedAttendece = await facultyModel.findOneAndUpdate(
+        { _id: faculty._id },
+        {
+          $push: {
+            courseAttendence: {
+              courseNumber: courseNumber,
+              allSessions: [date],
+              attendence: [
+                {
+                  date: date,
+                  studentsPresent: studentsPresent,
+                },
+              ],
+            },
+          },
+        },
+        { new: true }
+      );
+    }
+
     res.send({ message: "test", updatedAttendece });
   } catch (error) {
     console.log(error);
